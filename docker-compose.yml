@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  health-manager:
+    build: .
+    container_name: health-manager
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+    networks:
+      external-network:
+
+
+networks:
+  external-network:
+    driver: bridge
