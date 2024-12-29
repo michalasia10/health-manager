@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 
 from src.core.models import BaseMacroModel
@@ -8,12 +9,16 @@ class Plan(BaseMacroModel):
     # client = models.ForeignKey('clients.Client', on_delete=models.CASCADE)
     # charfield(s)
     name = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     # time(s)
     start_date = models.DateField()
     end_date = models.DateField(blank=True, null=True)
     # boolean
     is_active = models.BooleanField(default=True)
+
+    def clean(self):
+        if self.end_date and self.start_date > self.end_date:
+            raise ValidationError('End date must be greater than start date')
 
 
 class PlanRecord(BaseMacroModel):
