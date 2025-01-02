@@ -1,5 +1,7 @@
 from ninja import Schema
 
+from src.core.dto.types import PrecisedFloatAnnotated
+
 
 class BaseOutputDTO(Schema):
     create_time: str
@@ -7,10 +9,10 @@ class BaseOutputDTO(Schema):
 
 
 class BaseMacroDTO(Schema):
-    fat: float
-    protein: float
-    carb: float
-    kcal: float
+    fat: PrecisedFloatAnnotated
+    protein: PrecisedFloatAnnotated
+    carb: PrecisedFloatAnnotated
+    kcal: PrecisedFloatAnnotated
 
 
 class BaseMacroOutputDTO(BaseOutputDTO, BaseMacroDTO):

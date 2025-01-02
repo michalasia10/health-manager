@@ -1,32 +1,48 @@
-from decimal import Decimal, getcontext
+from decimal import Decimal, getcontext, ROUND_HALF_UP
 
 
-getcontext().prec = 50
 
 
-class PreciseFloat:
-    def __init__(self, value):
-        self.value = Decimal(str(value))
+class PrecisedFloat(float):
+    def __new__(cls, value):
+        value = Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return super().__new__(cls, float(value))
 
-    def __add__(self, other):
-        if isinstance(other, PreciseFloat):
-            return PreciseFloat(self.value + other.value)
-        return PreciseFloat(self.value + Decimal(str(other)))
+    def __iadd__(self, other):
+        if isinstance(other, PrecisedFloat):
+            result = Decimal(self) + Decimal(other)
+        else:
+            result = Decimal(self) + Decimal(str(other))
 
-    def __sub__(self, other):
-        if isinstance(other, PreciseFloat):
-            return PreciseFloat(self.value - other.value)
-        return PreciseFloat(self.value - Decimal(str(other)))
+        result = result.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return PrecisedFloat(float(result))
+
+    def __isub__(self, other):
+        if isinstance(other, PrecisedFloat):
+            result = Decimal(self) - Decimal(other)
+        else:
+            result = Decimal(self) - Decimal(str(other))
+
+        result = result.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return PrecisedFloat(float(result))
+
+    def __itruediv__(self, other):
+        if isinstance(other, PrecisedFloat):
+            result = Decimal(self) / Decimal(other)
+        else:
+            result = Decimal(self) / Decimal(str(other))
+
+        result = result.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return PrecisedFloat(float(result))
 
     def __mul__(self, other):
-        if isinstance(other, PreciseFloat):
-            return PreciseFloat(self.value * other.value)
-        return PreciseFloat(self.value * Decimal(str(other)))
+        if isinstance(other, PrecisedFloat):
+            result = Decimal(self) * Decimal(other)
+        else:
+            result = Decimal(self) * Decimal(str(other))
 
-    def __truediv__(self, other):
-        if isinstance(other, PreciseFloat):
-            return PreciseFloat(self.value / other.value)
-        return PreciseFloat(self.value / Decimal(str(other)))
+        result = result.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        return PrecisedFloat(float(result))
 
     def __repr__(self):
-        return f"{self.value}"
+        return f"{self:.2f}"
