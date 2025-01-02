@@ -5,8 +5,8 @@ from django.core.exceptions import ValidationError
 from faker import Faker
 
 from src.plans.dto import PlanInputDTO
-from src.plans.models import Plan
-from src.plans.services.plan import create
+from src.plans.models import Plan, PlanRecord, BASIC_TYPES
+from src.plans.services.plan import acreate
 
 pytestmark = pytest.mark.django_db
 fake = Faker()
@@ -20,7 +20,7 @@ async def test_create_plan():
     dto_input = {
         "name": "test",
         "description": "test",
-        "start_date": fake.date(),
+        "start_date": start_date,
         "end_date": start_date + timedelta(days=1),
         "fat": 20.2,
         "protein": 20.2,
@@ -31,10 +31,13 @@ async def test_create_plan():
     dto = PlanInputDTO(**dto_input)
 
     # when
-    plan = await create(dto)
+    plan = await acreate(dto)
 
     # then
     assert await Plan.objects.aexists()
+    assert await PlanRecord.objects.aexists()
+    assert await PlanRecord.objects.filter(plan=plan).acount() == len(BASIC_TYPES)
+
     assert isinstance(plan, Plan)
     assert plan.name == dto.name
     assert plan.description == dto.description
@@ -60,4 +63,4 @@ async def test_create_plan_with_invalid_end_date():
 
     # when
     with pytest.raises(ValidationError):
-        await create(dto)
+        await acreate(dto)
