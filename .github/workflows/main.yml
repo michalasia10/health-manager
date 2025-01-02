@@ -1,0 +1,30 @@
+name: Palumi
+on:
+  push:
+jobs:
+  django-tests:
+     runs-on: ubuntu-latest
+     services:
+       postgres:
+         image: postgres:latest
+         env:
+           POSTGRES_PASSWORD: postgres
+           POSTGRES_USER: postgres
+           POSTGRES_DB: postgres
+         ports:
+           - 5432:5432
+         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+     steps:
+       - uses: actions/checkout@v4
+       - name: Build image
+         run: docker build -t app .
+       - name: Run tests
+         run: |
+           docker run --network host \
+             -e POSTGRES_PASSWORD=postgres \
+             -e POSTGRES_USER=postgres \
+             -e POSTGRES_DB=postgres \
+             -e POSTGRES_HOST=localhost \
+             -e POSTGRES_PORT=5432 \
+             app pytest -vv
