@@ -18,8 +18,8 @@ aatomic_manager = AsyncAtomicContextManager()
 
 
 def aatomic(fun, *args, **kwargs):
-    async def wrapper():
+    async def wrapper(*aargs, **akwargs):
         async with aatomic_manager:
-            return await fun(*args, **kwargs)
+            return await fun(*aargs, **akwargs)
 
     return wrapper
