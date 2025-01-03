@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class PlansConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'src.plans'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "src.plans"

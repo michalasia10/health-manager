@@ -1,8 +1,8 @@
 from datetime import date
-from typing import Optional
+from typing import Optional, Any
 
 from src.core.dto import BaseMacroDTO
-from src.plans.models import RecordType
+from src.plans.models import RecordTypeEnum
 
 
 class PlanBaseDTO(BaseMacroDTO):
@@ -12,14 +12,23 @@ class PlanBaseDTO(BaseMacroDTO):
     end_date: date
 
 
-class PlanInputDTO(PlanBaseDTO):
+class PlanRecordBaseDTO(BaseMacroDTO):
+    type: RecordTypeEnum
+
+
+class PlanRecordOutputDTO(PlanRecordBaseDTO):
+    id: Any
+
+
+class PlanRecordInputDTO(PlanRecordBaseDTO):
     pass
 
 
-class PlanRecordOutputDTO(BaseMacroDTO):
-    type: RecordType
+class PlanInputDTO(PlanBaseDTO):
+    records: Optional[list[PlanRecordInputDTO]] = None
 
 
 class PlanOutputDTO(PlanBaseDTO):
+    id: Any
     is_active: bool
     records: list[PlanRecordOutputDTO]

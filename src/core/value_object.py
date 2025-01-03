@@ -1,8 +1,6 @@
 from decimal import Decimal, getcontext, ROUND_HALF_UP
 
 
-
-
 class PrecisedFloat(float):
     def __new__(cls, value):
         value = Decimal(str(value)).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)

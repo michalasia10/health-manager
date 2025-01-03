@@ -1,9 +1,9 @@
 from enum import Enum
 
-from django.core.exceptions import ValidationError
 from django.db import models
 
 from src.core.db.models import BaseMacroModel
+from src.core.exception import ValidationError
 
 
 class Plan(BaseMacroModel):
@@ -19,44 +19,45 @@ class Plan(BaseMacroModel):
     is_active = models.BooleanField(default=True)
 
     def clean(self):
+        super().clean()
         if self.end_date and self.start_date > self.end_date:
-            raise ValidationError('End date must be greater than start date')
+            raise ValidationError("End date must be greater than start date.")
 
 
-class RecordType(str, Enum):
-    BREAKFAST = 'breakfast'
-    SNACK = 'snack'
-    DESSERT = 'dessert'
-    BRUNCH = 'brunch'
-    LUNCH = 'lunch'
-    DINNER = 'dinner'
+class RecordTypeEnum(str, Enum):
+    BREAKFAST = "breakfast"
+    SNACK = "snack"
+    DESSERT = "dessert"
+    BRUNCH = "brunch"
+    LUNCH = "lunch"
+    DINNER = "dinner"
 
 
 BASIC_TYPES = [
-    RecordType.BREAKFAST,
-    RecordType.LUNCH,
-    RecordType.DINNER,
+    RecordTypeEnum.BREAKFAST,
+    RecordTypeEnum.LUNCH,
+    RecordTypeEnum.DINNER,
 ]
 
 
 class PlanRecord(BaseMacroModel):
     # relation(s)
     plan = models.ForeignKey(
-        to='plans.Plan',
-        related_name='records',
+        to="plans.Plan",
+        related_name="records",
         on_delete=models.CASCADE,
     )
     # charfield(s)
     type = models.CharField(
         choices=[
-            (RecordType.BREAKFAST.value, 'Breakfast'),
-            (RecordType.SNACK.value, 'Snack'),
-            (RecordType.DESSERT.value, 'Dessert'),
-            (RecordType.BRUNCH.value, 'Brunch'),
-            (RecordType.LUNCH.value, 'Lunch'),
-            (RecordType.DINNER.value, 'Dinner'),
+            (RecordTypeEnum.BREAKFAST.value, "Breakfast"),
+            (RecordTypeEnum.SNACK.value, "Snack"),
+            (RecordTypeEnum.DESSERT.value, "Dessert"),
+            (RecordTypeEnum.BRUNCH.value, "Brunch"),
+            (RecordTypeEnum.LUNCH.value, "Lunch"),
+            (RecordTypeEnum.DINNER.value, "Dinner"),
         ],
-        max_length=255
+        max_length=255,
     )
 
     @classmethod
@@ -77,18 +78,18 @@ class PlanRecord(BaseMacroModel):
                 carb=carb,
                 kcal=kcal,
             )
-            record.full_clean(exclude=['plan'])
+            record.full_clean(exclude=["plan"])
             await record.asave()
             records.append(record)
 
-        plan.set_prefetch('records', records)
+        plan.set_prefetch("records", records)
 
 
 class Meal(BaseMacroModel):
     # relation(s)
     record = models.ForeignKey(
-        to='plans.PlanRecord',
-        related_name='meals',
+        to="plans.PlanRecord",
+        related_name="meals",
         on_delete=models.CASCADE,
     )
     # charfield(s)

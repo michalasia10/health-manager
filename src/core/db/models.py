@@ -3,6 +3,7 @@ from typing import Any
 from django.db import models
 
 from src.core.db.fields import PrecisedFloatField
+from src.core.exception import ValidationError
 
 
 class BaseModel(models.Model):
@@ -19,9 +20,7 @@ class BaseModel(models.Model):
         """
         Special method to set child object to the cache, to avoid extra queries and async problems in ninja.
         """
-        self._prefetched_objects_cache = {
-            name: value
-        }
+        self._prefetched_objects_cache = {name: value}
 
 
 class BaseMacroModel(BaseModel):
@@ -32,3 +31,11 @@ class BaseMacroModel(BaseModel):
 
     class Meta:
         abstract = True
+
+    def clean(self):
+        if all(not getattr(self, field) for field in ["fat", "protein", "carb"]):
+            raise ValidationError(
+                f"At least one macro must be provided or have a value greater than 0."
+            )
+        if not self.kcal:
+            raise ValidationError("Kcal must be provided.")

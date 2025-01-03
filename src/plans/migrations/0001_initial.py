@@ -5,65 +5,114 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Plan',
+            name="Plan",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('create_time', models.DateTimeField(auto_now_add=True)),
-                ('update_time', models.DateTimeField(auto_now=True)),
-                ('fat', models.FloatField()),
-                ('protein', models.FloatField()),
-                ('carb', models.FloatField()),
-                ('kcal', models.FloatField()),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField()),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField(blank=True, null=True)),
-                ('is_active', models.BooleanField(default=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("create_time", models.DateTimeField(auto_now_add=True)),
+                ("update_time", models.DateTimeField(auto_now=True)),
+                ("fat", models.FloatField()),
+                ("protein", models.FloatField()),
+                ("carb", models.FloatField()),
+                ("kcal", models.FloatField()),
+                ("name", models.CharField(max_length=255)),
+                ("description", models.TextField()),
+                ("start_date", models.DateField()),
+                ("end_date", models.DateField(blank=True, null=True)),
+                ("is_active", models.BooleanField(default=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='PlanRecord',
+            name="PlanRecord",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('create_time', models.DateTimeField(auto_now_add=True)),
-                ('update_time', models.DateTimeField(auto_now=True)),
-                ('fat', models.FloatField()),
-                ('protein', models.FloatField()),
-                ('carb', models.FloatField()),
-                ('kcal', models.FloatField()),
-                ('type', models.CharField(choices=[('breakfast', 'Breakfast'), ('snack', 'Snack'), ('dessert', 'Dessert'), ('brunch', 'Brunch'), ('lunch', 'Lunch'), ('dinner', 'Dinner')], max_length=255)),
-                ('plan', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='records', to='plans.plan')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("create_time", models.DateTimeField(auto_now_add=True)),
+                ("update_time", models.DateTimeField(auto_now=True)),
+                ("fat", models.FloatField()),
+                ("protein", models.FloatField()),
+                ("carb", models.FloatField()),
+                ("kcal", models.FloatField()),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[
+                            ("breakfast", "Breakfast"),
+                            ("snack", "Snack"),
+                            ("dessert", "Dessert"),
+                            ("brunch", "Brunch"),
+                            ("lunch", "Lunch"),
+                            ("dinner", "Dinner"),
+                        ],
+                        max_length=255,
+                    ),
+                ),
+                (
+                    "plan",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="records",
+                        to="plans.plan",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Meal',
+            name="Meal",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('create_time', models.DateTimeField(auto_now_add=True)),
-                ('update_time', models.DateTimeField(auto_now=True)),
-                ('fat', models.FloatField()),
-                ('protein', models.FloatField()),
-                ('carb', models.FloatField()),
-                ('kcal', models.FloatField()),
-                ('name', models.CharField(max_length=255)),
-                ('record', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='meals', to='plans.planrecord')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("create_time", models.DateTimeField(auto_now_add=True)),
+                ("update_time", models.DateTimeField(auto_now=True)),
+                ("fat", models.FloatField()),
+                ("protein", models.FloatField()),
+                ("carb", models.FloatField()),
+                ("kcal", models.FloatField()),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "record",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="meals",
+                        to="plans.planrecord",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
     ]

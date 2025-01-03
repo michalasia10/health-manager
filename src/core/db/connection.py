@@ -25,6 +25,7 @@ database_sync_to_async = DatabaseSyncToAsync
 async def aclose_old_connections_func():
     return await sync_to_async(close_old_connections)()
 
+
 def aclose_old_connections(fun, *args, **kwargs):
     async def wrapper(*aargs, **akwargs):
         await aclose_old_connections_func()
