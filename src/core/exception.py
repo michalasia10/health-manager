@@ -22,3 +22,8 @@ class CoreException(Exception):
 class ValidationError(CoreException):
     def __init__(self, message: str, status_code: int = 400) -> None:
         super().__init__(message, status_code)
+
+
+class NotFoundError(CoreException):
+    def __init__(self, message: str, status_code: int = 404) -> None:
+        super().__init__(message, status_code)

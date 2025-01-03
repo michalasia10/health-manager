@@ -1,14 +1,32 @@
 from typing import Any
 
+from asgiref.sync import sync_to_async
 from django.db import models
 
 from src.core.db.fields import PrecisedFloatField
-from src.core.exception import ValidationError
+from src.core.exception import ValidationError, NotFoundError
+
+
+class AsyncQuerySet(models.Manager):
+    """
+    Async manager to handle async operations.
+    """
+
+    async def aget(self, *args, **kwargs):
+        try:
+            return await super().aget(*args, **kwargs)
+        except self.model.DoesNotExist:
+            raise NotFoundError(f"{self.model.__name__} not found.")
+
+    async def aselect_related(self, *fields):
+        return await sync_to_async(self.select_related)(*fields)
 
 
 class BaseModel(models.Model):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
+
+    objects = AsyncQuerySet()
 
     class Meta:
         abstract = True
