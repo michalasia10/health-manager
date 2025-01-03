@@ -1,10 +1,12 @@
+from typing import Any
+
 from ninja import FilterSchema, Query
-from ninja.pagination import paginate
 from ninja.router import Router
 
+from src.core.api.pagination import default_paginate
 from src.core.filters import IContainsField
-from src.plans.dto import PlanInputDTO, PlanOutputDTO
-from src.plans.services.plan import aget_all, acreate, aget_by_id
+from src.plans.dto import PlanInputDTO, PlanOutputDTO, PlanRecordInputDTO
+from src.plans.services.plan import aget_all, acreate, aget_by_id, aadd_record, aremove_record
 
 router = Router(tags=["plans"])
 
@@ -15,7 +17,7 @@ class PlanFilter(FilterSchema):
 
 
 @router.get("/", response=list[PlanOutputDTO])
-@paginate
+@default_paginate
 async def list(request, filters: PlanFilter = Query(...)):
     query = filters.get_filter_expression()
     return await aget_all(query=query)
@@ -27,5 +29,15 @@ async def create(request, data: PlanInputDTO):
 
 
 @router.get("/{pk}", response=PlanOutputDTO)
-async def retrieve(request, pk: int):
+async def retrieve(request, pk: Any):
     return await aget_by_id(pk=pk)
+
+
+@router.post("/add_record/{pk}", response=PlanOutputDTO)
+async def add_record(request, pk: Any, data: PlanRecordInputDTO):
+    return await aadd_record(plan_pk=pk, data=data)
+
+
+@router.delete("/records/{pk}", response=PlanOutputDTO)
+async def delete_record(request, pk: Any):
+    return await aremove_record(pk=pk)
