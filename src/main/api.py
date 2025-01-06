@@ -23,7 +23,9 @@ def django_validation_exception(request, exc: CoreException) -> HttpResponse:
 
 
 @api.exception_handler(ObjectDoesNotExist)
-def django_object_does_not_exist_exception(request, exc: ObjectDoesNotExist) -> HttpResponse:
+def django_object_does_not_exist_exception(
+    request, exc: ObjectDoesNotExist
+) -> HttpResponse:
     return api.create_response(
         request,
         dict(
