@@ -28,10 +28,10 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
         limit: int
 
     def paginate_queryset(
-            self,
-            queryset: QuerySet,
-            pagination: Input,
-            **params: Any,
+        self,
+        queryset: QuerySet,
+        pagination: Input,
+        **params: Any,
     ) -> Any:
         offset = pagination.offset
         limit: int = min(pagination.limit, settings.PAGINATION_MAX_LIMIT)
@@ -39,14 +39,14 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
             "count": self._items_count(queryset),
             "offset": offset,
             "limit": limit,
-            "items": queryset[offset: offset + limit],
+            "items": queryset[offset : offset + limit],
         }  # noqa: E203
 
     async def apaginate_queryset(
-            self,
-            queryset: QuerySet,
-            pagination: Input,
-            **params: Any,
+        self,
+        queryset: QuerySet,
+        pagination: Input,
+        **params: Any,
     ) -> Any:
         offset = pagination.offset
         limit: int = min(pagination.limit, settings.PAGINATION_MAX_LIMIT)
@@ -54,7 +54,7 @@ class CustomLimitOffsetPagination(LimitOffsetPagination):
             "count": await self._aitems_count(queryset),
             "offset": offset,
             "limit": limit,
-            "items": queryset[offset: offset + limit],
+            "items": queryset[offset : offset + limit],
         }  # noqa: E203
 
 

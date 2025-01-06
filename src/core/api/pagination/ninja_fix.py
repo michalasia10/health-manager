@@ -8,8 +8,16 @@ from django.utils.module_loading import import_string
 from ninja.conf import settings
 from ninja.constants import NOT_SET
 from ninja.errors import ConfigError
-from ninja.pagination import make_response_paginated, PaginationBase, AsyncPaginationBase
-from ninja.utils import contribute_operation_args, contribute_operation_callback, is_async_callable
+from ninja.pagination import (
+    make_response_paginated,
+    PaginationBase,
+    AsyncPaginationBase,
+)
+from ninja.utils import (
+    contribute_operation_args,
+    contribute_operation_callback,
+    is_async_callable,
+)
 
 
 def paginate(func_or_pgn_class: Any = NOT_SET, **paginator_params: Any) -> Callable:
@@ -37,9 +45,9 @@ def paginate(func_or_pgn_class: Any = NOT_SET, **paginator_params: Any) -> Calla
 
 
 def _inject_pagination(
-        func: Callable,
-        paginator_class: Type[Union[PaginationBase, AsyncPaginationBase]],
-        **paginator_params: Any,
+    func: Callable,
+    paginator_class: Type[Union[PaginationBase, AsyncPaginationBase]],
+    **paginator_params: Any,
 ) -> Callable:
     paginator = paginator_class(**paginator_params)
     if is_async_callable(func):
