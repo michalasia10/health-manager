@@ -2,9 +2,9 @@ import typing
 
 import logfire
 from asgiref.sync import sync_to_async
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 
-from src.core.db import aatomic, aclose_old_connections, safe_aatomic
+from src.core.db import safe_aatomic
 from src.plans.models import Plan, PlanRecord
 
 if typing.TYPE_CHECKING:
@@ -34,16 +34,19 @@ async def acreate(dto: "PlanInputDTO") -> "Plan":
     return new_plan
 
 
-async def aget_all(query: Q) -> list["Plan"]:
-    return await sync_to_async(lambda: Plan.objects.filter(query).prefetch_related('records').all())()
+async def aget_all(query: Q = Q()) -> list["Plan"] | QuerySet["Plan"]:
+    return await sync_to_async(
+        Plan.objects.filter(query).prefetch_related("records").all
+    )()
 
 
 async def aget_by_id(pk: typing.Any) -> "Plan":
-    return await Plan.objects.aget(pk=pk)
+    return await Plan.objects.prefetch_related("records").aget(pk=pk)
+
 
 @safe_aatomic
-async def aadd_record(plan_pk: int, data: "PlanRecordInputDTO") -> PlanRecord:
-    plan = await Plan.objects.prefetch_related('records').aget(pk=plan_pk)
+async def aadd_record(plan_pk: typing.Any, data: "PlanRecordInputDTO") -> PlanRecord:
+    plan = await Plan.objects.prefetch_related("records").aget(pk=plan_pk)
 
     record = PlanRecord(plan=plan, **data.dict())
     record.full_clean(exclude=["plan"])
@@ -51,16 +54,24 @@ async def aadd_record(plan_pk: int, data: "PlanRecordInputDTO") -> PlanRecord:
 
     logfire.info("Adding record {record} to plan {plan}", record=record, plan=plan)
 
-    plan.set_prefetch("records", plan + [record])
+    if await plan.records.aexists():
+        records = list(await sync_to_async(plan.records.all)()) + [record]
+    else:
+        records = [record]
+
+    plan.set_prefetch("records", records)
     return plan
 
 
 @safe_aatomic
-async def aremove_record(pk: typing.Any) -> PlanRecord:
-    record = await PlanRecord.objects.select_related('plan').aget(pk=pk)
+async def aremove_record(pk: typing.Any, record_pk: typing.Any) -> PlanRecord:
+    plan = await Plan.objects.prefetch_related("records").aget(pk=pk)
+
+    record = await plan.records.aget(pk=record_pk)
 
     await record.adelete()
-    plan = await Plan.objects.prefetch_related('records').aget(pk=record.plan_id)
 
-    logfire.info("Record {record} removed from plan {plan}", record=pk, plan=plan)
+    plan = await Plan.objects.prefetch_related("records").aget(pk=record.plan_id)
+
+    logfire.info("Record {record} removed from plan {plan}", record=record_pk, plan=pk)
     return plan

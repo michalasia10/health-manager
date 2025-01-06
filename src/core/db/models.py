@@ -53,7 +53,7 @@ class BaseMacroModel(BaseModel):
     def clean(self):
         if all(not getattr(self, field) for field in ["fat", "protein", "carb"]):
             raise ValidationError(
-                f"At least one macro must be provided or have a value greater than 0."
+                "At least one macro must be provided or have a value greater than 0."
             )
         if not self.kcal:
             raise ValidationError("Kcal must be provided.")
