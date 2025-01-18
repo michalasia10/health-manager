@@ -53,16 +53,19 @@ endef
 make_migrations:
 	$(call e_info,"Creating migrations...")
 	docker-compose run --rm $(APP_NAME) python src/manage.py makemigrations
+	$(call e_success,"Migrations...done..")
 
 .PHONY: migrate
 migrate:
 	$(call e_info,"Migrating...")
 	docker-compose run --rm $(APP_NAME) python src/manage.py migrate
+	$(call e_success,"Migration done...")
 
 .PHONY: run-test
-run_test:
+run-test:
 	$(call e_info,"Running tests...")
 	docker-compose run --rm $(APP_NAME) pytest $(ARGS)
+	$(call e_success,"Tests done...")
 
 .PHONY: build-ci-app
 build-ci-app:
@@ -94,3 +97,18 @@ format:
 	$(call e_info,"Formatting code...")
 	ruff format src
 	$(call e_success,"Code formatted!")
+
+.PHONY: help
+help:
+	@echo "Usage: make [target]"
+	@echo ""
+	@echo "Targets:"
+	@echo "  make-migrations: Create migrations"
+	@echo "  migrate: Apply migrations"
+	@echo "  run-test: Run tests"
+	@echo "  build-ci-app: Build app for CI"
+	@echo "  run-ci-test: Run tests in CI"
+	@echo "  lock-pckgs: Lock dependencies"
+	@echo "  format: Format code"
+	@echo "  help: Show this help message"
+	@echo ""
