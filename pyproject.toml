@@ -19,3 +19,8 @@ dependencies = [
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "src.main.settings"
 python_files = "tests/* test_*.py *_tests.py"
+
+[tool.ruff]
+exclude = [
+    "__init__.py",
+]
