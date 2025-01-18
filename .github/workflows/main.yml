@@ -18,13 +18,11 @@ jobs:
      steps:
        - uses: actions/checkout@v4
        - name: Build image
-         run: docker build -t app .
+         run: make build-ci-app
        - name: Run tests
-         run: |
-           docker run --network host \
-             -e POSTGRES_PASSWORD=postgres \
-             -e POSTGRES_USER=postgres \
-             -e POSTGRES_DB=postgres \
-             -e POSTGRES_HOST=localhost \
-             -e POSTGRES_PORT=5432 \
-             app pytest -vv
+         run: make run-ci-tests \ 
+              POSTGRES_PASSWORD=postgres \
+              POSTGRES_USER=postgres \
+              POSTGRES_DB=postgres \ 
+              POSTGRES_HOST=localhost \ 
+              POSTGRES_PORT=5432
