@@ -20,9 +20,9 @@ jobs:
        - name: Build image
          run: make build-ci-app
        - name: Run tests
-         run: make run-ci-test \ 
+         run: make run-ci-test \
               POSTGRES_PASSWORD=postgres \
               POSTGRES_USER=postgres \
-              POSTGRES_DB=postgres \ 
-              POSTGRES_HOST=localhost \ 
+              POSTGRES_DB=postgres \
+              POSTGRES_HOST=localhost \
               POSTGRES_PORT=5432

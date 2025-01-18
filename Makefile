@@ -87,3 +87,10 @@ lock-pckgs:
 	$(call e_info,"Locking dependencies...")
 	uv pip compile pyproject.toml -o requirements.txt
 	$(call e_success,"Dependencies locked!")
+
+
+.PHONY: format
+format:
+	$(call e_info,"Formatting code...")
+	ruff format src
+	$(call e_success,"Code formatted!")
