@@ -3,10 +3,17 @@ from enum import Enum
 from django.db import models
 
 from src.core.db.models import BaseMacroModel
-from src.core.exception import ValidationError
+from src.core.validator.macro import MacroValidator
+from src.core.validator.time import DateTimeRangeValidator
+from src.plans.validator.plan import PlanMacroSummaryValidator
 
 
 class Plan(BaseMacroModel):
+    VALIDATORS = [
+        MacroValidator,
+        DateTimeRangeValidator,
+        PlanMacroSummaryValidator,
+    ]
     # ToDo: Add client field
     # client = models.ForeignKey('clients.Client', on_delete=models.CASCADE)
     # charfield(s)
@@ -17,11 +24,6 @@ class Plan(BaseMacroModel):
     end_date = models.DateField(blank=True, null=True)
     # boolean
     is_active = models.BooleanField(default=True)
-
-    def clean(self):
-        super().clean()
-        if self.end_date and self.start_date > self.end_date:
-            raise ValidationError("End date must be greater than start date.")
 
 
 class RecordTypeEnum(str, Enum):
@@ -61,7 +63,7 @@ class PlanRecord(BaseMacroModel):
     )
 
     @classmethod
-    async def create_basic_types(cls, plan: Plan):
+    def create_basic_types(cls, plan: Plan) -> list["PlanRecord"]:
         fat = plan.fat / len(BASIC_TYPES)
         protein = plan.protein / len(BASIC_TYPES)
         carb = plan.carb / len(BASIC_TYPES)
@@ -78,11 +80,10 @@ class PlanRecord(BaseMacroModel):
                 carb=carb,
                 kcal=kcal,
             )
-            record.full_clean(exclude=["plan"])
-            await record.asave()
+            record.validate()
             records.append(record)
 
-        plan.set_prefetch("records", records)
+        return records
 
 
 class Meal(BaseMacroModel):
