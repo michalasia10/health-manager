@@ -20,7 +20,7 @@ jobs:
        - name: Build image
          run: make build-ci-app
        - name: Run tests
-         run: make run-ci-tests \ 
+         run: make run-ci-test \ 
               POSTGRES_PASSWORD=postgres \
               POSTGRES_USER=postgres \
               POSTGRES_DB=postgres \ 
