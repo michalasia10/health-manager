@@ -13,8 +13,14 @@ dependencies = [
     "pytest-asyncio>=0.25.1",
     "pytest-django>=4.9.0",
     "pytest-faker>=2.0.0",
+    "pytest-xdist>=3.6.1",
     "uvicorn>=0.34.0",
 ]
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "src.main.settings"
 python_files = "tests/* test_*.py *_tests.py"
+
+[tool.ruff]
+exclude = [
+    "__init__.py",
+]
