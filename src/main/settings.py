@@ -15,6 +15,7 @@ import sys
 from pathlib import Path
 
 import logfire
+from loguru import logger
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -133,3 +134,14 @@ logfire.configure(
     token=LOGFIRE_TOKEN, send_to_logfire=not DEBUG and "pytest" not in sys.argv[0]
 )
 logfire.instrument_django()
+logfire.configure()
+
+logger.configure(handlers=[logfire.loguru_handler()])
+logger.add(
+    sys.stdout,
+    colorize=True,
+    format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> |"
+    " <y>{level}</y> |"
+    " <n>{message}</n> |"
+    " <c>EXTRA: {extra}</c>",
+)
