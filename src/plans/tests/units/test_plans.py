@@ -3,7 +3,7 @@ from datetime import timedelta
 import pytest
 from faker import Faker
 
-from src.core.exception import ValidationError
+from src.core.exception import DomainError
 from src.plans.models import Plan
 
 fake = Faker()
@@ -44,7 +44,7 @@ def test_create_plan_with_invalid_end_date():
     )
 
     # when / then
-    with pytest.raises(ValidationError):
+    with pytest.raises(DomainError):
         plan.full_clean()
 
 
@@ -64,5 +64,5 @@ def test_create_plan_with_invalid_macro():
     )
 
     # when / then
-    with pytest.raises(ValidationError):
+    with pytest.raises(DomainError):
         plan.full_clean()

@@ -48,6 +48,11 @@ define e_success
 	@echo "\\n$(GREEN)$(SUCCESS_PREFIX) $(1)$(RESET)\\n"
 endef
 
+.PHONY: run-and-build
+run-and-build:
+	$(call e_info,"Building app AND RUNNING...")
+	docker-compose up -d --build
+	$(call e_success,"Done...")
 
 .PHONY: make-migrations
 make_migrations:
@@ -110,5 +115,6 @@ help:
 	@echo "  run-ci-test: Run tests in CI"
 	@echo "  lock-pckgs: Lock dependencies"
 	@echo "  format: Format code"
+	@echo "  run-and-build: Build app and run"
 	@echo "  help: Show this help message"
 	@echo ""
