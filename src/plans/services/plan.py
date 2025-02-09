@@ -47,7 +47,7 @@ async def aget_by_id(pk: typing.Any) -> "Plan":
 
 
 @safe_aatomic
-async def aadd_record(plan_pk: typing.Any, data: "PlanRecordInputDTO") -> PlanRecord:
+async def aadd_record(plan_pk: typing.Any, data: "PlanRecordInputDTO") -> Plan:
     plan = await Plan.objects.prefetch_related("records").aget(pk=plan_pk)
 
     record = PlanRecord(plan=plan, **data.dict())
@@ -66,7 +66,7 @@ async def aadd_record(plan_pk: typing.Any, data: "PlanRecordInputDTO") -> PlanRe
 
 
 @safe_aatomic
-async def aremove_record(pk: typing.Any, record_pk: typing.Any) -> PlanRecord:
+async def aremove_record(pk: typing.Any, record_pk: typing.Any) -> Plan:
     plan = await Plan.objects.prefetch_related("records").aget(pk=pk)
 
     record = await plan.records.aget(pk=record_pk)

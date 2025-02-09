@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Optional
 
 from ninja import FilterSchema, Query
 from ninja.router import Router
@@ -6,6 +6,7 @@ from ninja.router import Router
 from src.core.api.pagination import default_paginate
 from src.core.filters import IContainsField
 from src.plans.dto import PlanInputDTO, PlanOutputDTO, PlanRecordInputDTO
+from src.plans.services.meal import MealSearchService
 from src.plans.services.plan import (
     aget_all,
     acreate,
@@ -20,6 +21,10 @@ router = Router(tags=["plans"])
 class PlanFilter(FilterSchema):
     name: IContainsField
     description: IContainsField
+
+
+class MealSearchFilter(FilterSchema):
+    name: Optional[str]
 
 
 # ToDo: add patch method(s)
@@ -50,3 +55,8 @@ async def add_record(request, pk: Any, data: PlanRecordInputDTO):
 @router.delete("/{pk}/records/{record_pk}", response=PlanOutputDTO)
 async def delete_record(request, pk: Any, record_pk: Any):
     return await aremove_record(pk=pk, record_pk=record_pk)
+
+
+@router.get("/meals/search")
+async def search_meals(request, query: MealSearchFilter = Query(...)):
+    return await MealSearchService().search(query=query)

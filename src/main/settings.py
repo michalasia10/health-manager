@@ -130,6 +130,14 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGFIRE_TOKEN = os.getenv("LOGFIRE_TOKEN", "not-found-logfire-token")
 
+#### EXTERNAL_API ###
+OPEN_FOOD_FACTS_API_NAME = "health-manager"
+OPEN_FOOD_FACTS_TIMEOUT = 3
+OPEN_FOOD_LOGIN = os.getenv("OPEN_FOOD_LOGIN", "unknown")
+OPEN_FOOD_PASSWORD = os.getenv("OPEN_FOOD_PASSWORD", "unknown")
+OPEN_FOOD_AGENT = os.getenv("OPEN_FOOD_AGENT", "unknown")
+
+##### LOGGING #####
 logfire.configure(
     token=LOGFIRE_TOKEN, send_to_logfire=not DEBUG and "pytest" not in sys.argv[0]
 )
