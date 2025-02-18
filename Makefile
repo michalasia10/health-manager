@@ -66,6 +66,17 @@ migrate:
 	docker-compose run --rm $(APP_NAME) python src/manage.py migrate
 	$(call e_success,"Migration done...")
 
+.PHONY: add-app
+add-app:
+ifndef name
+	$(call e_info,"Proszę podać nazwę aplikacji: make startapp name=nazwa_aplikacji")
+	@exit 1
+endif
+	$(call e_info,"Tworzenie aplikacji $(name)...")
+	@docker-compose exec -it $(APP_NAME) bash -c "cd src && python manage.py startapp $(name)"
+	$(call e_success, "Aplikacja $(name) została utworzona i skonfigurowana")
+
+
 .PHONY: run-test
 run-test:
 	$(call e_info,"Running tests...")

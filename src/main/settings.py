@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "src.plans",
+    "src.myauth",
 ]
 
 MIDDLEWARE = [
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "src.myauth.middleware.AsyncUserMiddleware",
 ]
 
 ROOT_URLCONF = "src.main.urls"
@@ -130,11 +132,11 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGFIRE_TOKEN = os.getenv("LOGFIRE_TOKEN", "not-found-logfire-token")
 
-logfire.configure(
-    token=LOGFIRE_TOKEN, send_to_logfire=not DEBUG and "pytest" not in sys.argv[0]
-)
 logfire.instrument_django()
-logfire.configure()
+logfire.configure(
+    token=LOGFIRE_TOKEN,
+    send_to_logfire=not DEBUG and "pytest" not in sys.argv[0],
+)
 
 logger.configure(handlers=[logfire.loguru_handler()])
 logger.add(
@@ -145,3 +147,10 @@ logger.add(
     " <n>{message}</n> |"
     " <c>EXTRA: {extra}</c>",
 )
+
+
+### AUTH SETTINGS ###
+SUPABASE_JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET", "not-found")
+SUPABASE_ALGORITHM = os.getenv("SUPABASE_ALGORITHM", "HS256")
+SUPABASE_URL = os.getenv("SUPABASE_URL", "not-found")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY", "not-found")

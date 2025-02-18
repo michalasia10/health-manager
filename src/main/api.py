@@ -3,11 +3,13 @@ from django.http import HttpResponse
 from ninja import NinjaAPI
 
 from src.core.exception import CoreException
-from src.plans.api import router
+from src.myauth.api import router as myauth_router
+from src.plans.api import router as plans_router
 
 api = NinjaAPI(title="health-manager")
 
-api.add_router("/plans/", router)
+api.add_router("/plans/", plans_router)
+api.add_router("/auth/", myauth_router)
 
 
 @api.exception_handler(CoreException)
@@ -24,7 +26,8 @@ def django_validation_exception(request, exc: CoreException) -> HttpResponse:
 
 @api.exception_handler(ObjectDoesNotExist)
 def django_object_does_not_exist_exception(
-    request, exc: ObjectDoesNotExist
+    request,
+    exc: ObjectDoesNotExist,
 ) -> HttpResponse:
     return api.create_response(
         request,
