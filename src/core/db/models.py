@@ -1,12 +1,12 @@
-from typing import Any, Optional
+from typing import Any
 
 from asgiref.sync import sync_to_async
 from django.core.exceptions import ValidationError, NON_FIELD_ERRORS
 from django.db import models
 
 from src.core.db.fields import PrecisedFloatField
+from src.core.entity import Entity
 from src.core.exception import NotFoundError
-from src.core.validator.base import Validator
 from src.core.validator.macro import MacroValidator
 
 
@@ -25,9 +25,7 @@ class AsyncQuerySet(models.Manager):
         return await sync_to_async(self.select_related)(*fields)
 
 
-class BaseModel(models.Model):
-    VALIDATORS: list[Optional[type[Validator]]] = []
-
+class BaseModel(models.Model, Entity):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
 
@@ -90,15 +88,6 @@ class BaseModel(models.Model):
 
         if errors:
             raise ValidationError(errors)
-
-    def validate(self, *args, **kwargs):
-        assert all(issubclass(validator, Validator) for validator in self.VALIDATORS), (
-            f"VALIDATORS must be a list of {Validator.__name__} instances."
-        )
-        for validator in self.VALIDATORS:
-            validator(self).validate(*args, **kwargs)
-
-        return self
 
     def clean(self, *args, **kwargs):
         super().clean()
