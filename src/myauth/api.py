@@ -8,11 +8,11 @@ router = Router(tags=["auth"])
 auth_service = AuthService()
 
 
-@router.post("/signup", response=AuthOutputDto)
+@router.post("/signup", response=AuthOutputDto, auth=None)
 async def signup(request, data: AuthSignupInputDto):
     return await auth_service.sign_up(dto=data)
 
 
-@router.post("/login", response=AuthOutputDto)
+@router.post("/login", response=AuthOutputDto, auth=None)
 async def login(request, data: AuthSignupInputDto):
     return await auth_service.login(dto=data)

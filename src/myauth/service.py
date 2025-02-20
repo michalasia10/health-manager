@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import Literal, Any
+from typing import Literal
 
 
 from src.core.exception import ValidationError
@@ -26,23 +26,24 @@ class AuthService:
         self,
         access_token: str | None,
         refresh_token: str | None,
-    ) -> dict[str, Any]:
-        token_entity = TokenEntity(
+    ) -> AuthOutputDto:
+        token = TokenEntity(
             access_token=access_token,
             refresh_token=refresh_token,
         )
-        if token_entity.empty_token:
+
+        if token.empty_token:
             result = await self.client.sign_in_sign_in_anonymously()
             return AuthOutputDto(**result)
 
         try:
-            token_entity.validate()
+            token.validate()
         except TokenInvalid as e:
             raise e
         except TokenExpire:
-            result = await self.client.refresh_token(token_entity.refresh_token)
+            result = await self.client.refresh_token(token.refresh_token)
         else:
-            result = await self.client.retrieve_user(token_entity.access_token)
+            result = await self.client.retrieve_user(token.access_token)
 
         return AuthOutputDto(**result)
 

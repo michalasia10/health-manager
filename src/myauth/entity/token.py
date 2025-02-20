@@ -25,7 +25,8 @@ class TokenEntity(Entity):
         return jwt.decode(
             self.access_token,
             settings.SUPABASE_JWT_SECRET,
-            algorithms=settings.SUPABASE_ALGORITHM,
+            algorithms=[settings.SUPABASE_ALGORITHM],
+            audience=settings.SUPABASE_AUDIENCE,
             options=dict(
                 verify_signature=True,
             ),

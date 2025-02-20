@@ -36,4 +36,4 @@ class SessionDto(Schema):
 
 class AuthOutputDto(Schema):
     user: UserDto
-    session: SessionDto
+    session: Optional[SessionDto]

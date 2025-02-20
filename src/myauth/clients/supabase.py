@@ -33,11 +33,7 @@ class SupabaseAuthClient(AuthClient):
     async def retrieve_user(self, access_token: str) -> dict[str, Any]:
         client = await self.get_client()
 
-        response = await client.auth.api.get_user(
-            access_token=access_token,
-        )
-
-        session: Session = response.session
+        response = await client.auth.get_user(jwt=access_token)
         user: User = response.user
 
         return dict(
@@ -46,10 +42,7 @@ class SupabaseAuthClient(AuthClient):
                 role=user.role,
                 is_anonymous=user.is_anonymous,
             ),
-            session=dict(
-                access_token=session.access_token,
-                refresh_token=session.refresh_token,
-            ),
+            session=None,
         )
 
     async def sign_in_sign_in_anonymously(self) -> dict[str, Any]:

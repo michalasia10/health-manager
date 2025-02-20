@@ -11,4 +11,5 @@ repos:
     - id: ruff
       args: [ --fix ]
     - id: ruff-format
+      args: [ --diff ]
       types_or: [python, pyi]

@@ -152,5 +152,6 @@ logger.add(
 ### AUTH SETTINGS ###
 SUPABASE_JWT_SECRET = os.getenv("SUPABASE_JWT_SECRET", "not-found")
 SUPABASE_ALGORITHM = os.getenv("SUPABASE_ALGORITHM", "HS256")
+SUPABASE_AUDIENCE = os.getenv("SUPABASE_AUDIENCE", "authenticated")
 SUPABASE_URL = os.getenv("SUPABASE_URL", "not-found")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY", "not-found")
