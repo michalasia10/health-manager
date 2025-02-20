@@ -26,4 +26,4 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 EXPOSE 8080
 
 RUN chmod +x /app/src
-CMD [ "uvicorn", "src.main.asgi:application", "--reload","--host", "0.0.0.0" ,"--port","8080", "--lifespan", "off"]
+CMD [ "python3","-m", "src.main.run"]

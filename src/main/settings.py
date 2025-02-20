@@ -130,6 +130,15 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+### WORKER SETTINGS ###
+HOST = os.environ.get("HOST", "0.0.0.0")
+PORT = os.environ.get("PORT", "8080")
+
+
+### LOGGING SETTINGS ###
+
 LOGFIRE_TOKEN = os.getenv("LOGFIRE_TOKEN", "not-found-logfire-token")
 
 logfire.instrument_django()
