@@ -39,6 +39,7 @@ if __name__ == "__main__":
     env = os.getenv("ENV", "dev")
 
     common_options = {
+        "bind": f"{settings.HOST}:{settings.PORT}",
         "worker_class": MyUvicornWorker,
         "workers": get_workers_count(),
         "timeout": 120,
@@ -47,19 +48,16 @@ if __name__ == "__main__":
 
     env_configs = {
         "dev": {
-            "bind": f"{settings.HOST}:{settings.PORT}",
             "reload": True,
             "max_requests": 100,
             **common_options,
         },
         "staging": {
-            "bind": f"{settings.HOST}:{settings.PORT}",
             "reload": False,
             "max_requests": 500,
             **common_options,
         },
         "prod": {
-            "bind": f"{settings.HOST}:{settings.PORT}",
             "reload": False,
             "max_requests": 1000,
             "max_requests_jitter": 50,

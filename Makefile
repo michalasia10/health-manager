@@ -69,18 +69,18 @@ migrate:
 .PHONY: add-app
 add-app:
 ifndef name
-	$(call e_info,"Proszę podać nazwę aplikacji: make startapp name=nazwa_aplikacji")
+	$(call e_info,"Add `name` : make add-app name=new_name")
 	@exit 1
 endif
-	$(call e_info,"Tworzenie aplikacji $(name)...")
+	$(call e_info,"Making $(name)...")
 	@docker-compose exec -it $(APP_NAME) bash -c "cd src && python manage.py startapp $(name)"
-	$(call e_success, "Aplikacja $(name) została utworzona i skonfigurowana")
+	$(call e_success, "App $(name) added")
 
 
 .PHONY: run-test
 run-test:
 	$(call e_info,"Running tests...")
-	docker-compose run --rm $(APP_NAME) pytest $(ARGS)
+	docker-compose run --rm $(APP_NAME) pytest --reuse-db $(ARGS)
 	$(call e_success,"Tests done...")
 
 .PHONY: build-ci-app
