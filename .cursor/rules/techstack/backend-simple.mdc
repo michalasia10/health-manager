@@ -1,0 +1,179 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Django Stack Guidelines
+
+This document outlines the required structure and best practices for Django with Django-Ninja and Pydantic.
+
+## Core Technologies
+
+- Django: Web framework
+- Django-Ninja: Modern FastAPI-like API framework for Django
+- Pydantic: Data validation using Python type annotations
+
+## API Structure
+
+### API Endpoints (`api/`)
+```python
+# ✅ Good - Using Pydantic schemas and proper typing
+from ninja import Router
+from .schemas import UserSchema, UserCreateSchema
+from .services import UserService
+
+router = Router()
+
+@router.post("/users")
+def create_user(request, payload: UserCreateSchema):
+    return UserService.create_user(payload)
+
+# ❌ Bad - Not using schemas or proper typing
+@router.post("/users")
+def create_user(request, payload: dict):
+    User.objects.create(**payload)
+```
+
+### Schemas (`schemas/`)
+```python
+# ✅ Good - Pydantic models with validation
+from pydantic import BaseModel, Field, EmailStr
+
+class UserCreateSchema(BaseModel):
+    email: EmailStr
+    username: str = Field(min_length=3)
+
+# ❌ Bad - Using plain dictionaries
+user_schema = {
+    "email": str,
+    "username": str
+}
+```
+
+## Project Structure
+
+```
+backend/
+├── api/                    # Django-Ninja API endpoints
+│   ├── __init__.py
+│   ├── api.py             # API router configuration
+│   └── v1/                # API version
+├── core/                  # Core application modules
+│   ├── schemas/           # Pydantic schemas
+│   ├── services/         # Business logic services
+│   └── models/           # Django models
+└── infrastructure/       # Infrastructure layer
+    ├── database/         # Database configurations
+    └── middleware/       # Custom middleware
+```
+
+## Django Models Guidelines
+
+- Use abstract base classes for common fields
+- Implement proper model managers
+- Define clear relationships
+
+```python
+# ✅ Good - Proper model structure
+from django.db import models
+
+class BaseModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+class User(BaseModel):
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=150, unique=True)
+```
+
+## Django-Ninja Guidelines
+
+1. Always use Pydantic schemas for:
+   - Request validation
+   - Response serialization
+   - Documentation generation
+
+2. Use proper response types:
+```python
+# ✅ Good - Explicit response types
+@router.get("/users/{user_id}", response=UserSchema)
+def get_user(request, user_id: int):
+    return UserService.get_user(user_id)
+
+# ❌ Bad - Missing response type
+@router.get("/users/{user_id}")
+def get_user(request, user_id: int):
+    return User.objects.get(id=user_id)
+```
+
+
+## Pydantic Guidelines
+
+1. Use strict type validation:
+```python
+# ✅ Good - Strict typing with validation
+class UserCreateSchema(BaseModel):
+    email: EmailStr
+    age: int = Field(gt=0, lt=150)
+
+    class Config:
+        strict = True
+```
+
+2. Implement schema inheritance when needed:
+```python
+# ✅ Good - Schema inheritance
+class BaseResponseSchema(BaseModel):
+    id: int
+    created_at: datetime
+
+class UserResponse(BaseResponseSchema, UserCreateSchema):
+    pass
+```
+
+## Service Layer Requirements
+
+1. Services must handle business logic:
+```python
+# ✅ Good - Service pattern
+class UserService:
+    @staticmethod
+    def create_user(user_data: UserCreateSchema) -> User:
+        # Business logic here
+        return User.objects.create(**user_data.dict())
+```
+
+2. API endpoints should only use services, never direct model operations:
+```python
+# ✅ Good - Using service layer
+@router.post("/users")
+def create_user(request, payload: UserCreateSchema):
+    return UserService.create_user(payload)
+
+# ❌ Bad - Direct model operations
+@router.post("/users")
+def create_user(request, payload: UserCreateSchema):
+    return User.objects.create(**payload.dict())
+```
+
+## Testing Requirements
+
+1. Use pytest for testing
+2. Implement proper test isolation
+3. Use factories for test data:
+```python
+# ✅ Good - Using factories
+import factory
+
+class UserFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = User
+
+    email = factory.Faker('email')
+    username = factory.Faker('user_name')
+```
+
+[backend-simple.mdc](mdc:.cursor/rules/techstack/backend-simple.mdc)
