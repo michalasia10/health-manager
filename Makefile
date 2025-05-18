@@ -87,7 +87,7 @@ run-test:
 build-ci-app:
 	$(call echo_info,"Build app...")
 	docker build -t $(APP_NAME) .
-	$(call echo_success,"Build app..done...")
+	$(call echo_success,"Build app..done....")
 
 .PHONY: run-ci-test
 run-ci-test:
